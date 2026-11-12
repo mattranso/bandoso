@@ -1,0 +1,64 @@
+<div id="location-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Ghim Điểm Dữ Liệu Mới</h2>
+      <button onclick="closeModal()" class="btn-close"><span class="material-icons">close</span></button>
+    </div>
+    <form id="loc-form" onsubmit="saveLocation(event)">
+      <input type="hidden" id="edit-location-id">
+      <div class="form-row">
+        <div class="form-group flex-2">
+          <label>Tên điểm <span class="required">*</span></label>
+          <input type="text" id="loc-name" required placeholder="Nhập tên điểm...">
+        </div>
+        <div class="form-group flex-1">
+          <label>Nhóm dữ liệu <span class="required">*</span></label>
+          <select id="loc-group" required onchange="populateFormTypes()">
+            <option value="">-- Chọn nhóm --</option>
+            <option value="AN SINH XÃ HỘI">An sinh xã hội</option>
+            <option value="CÔNG TRÌNH – CỘNG ĐỒNG">Công trình – cộng đồng</option>
+            <option value="MẶT TRẬN – ĐOÀN THỂ">Mặt trận – đoàn thể</option>
+            <option value="MÔ HÌNH CỘNG ĐỒNG">Mô hình cộng đồng</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label>Loại điểm <span class="required">*</span></label>
+          <select id="loc-type" required>
+            <option value="">-- Chọn loại điểm --</option>
+          </select>
+        </div>
+        <div class="form-group flex-1">
+          <label>Xã / Phường (95 đơn vị) <span class="required">*</span></label>
+          <select id="loc-ward" required>
+            <option value="">-- Chọn xã/phường --</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Địa chỉ chi tiết</label>
+        <input type="text" id="loc-address" placeholder="Số nhà, tên đường...">
+      </div>
+      <div class="form-group">
+        <label>Mô tả chi tiết</label>
+        <textarea id="loc-desc" rows="3" placeholder="Nhập mô tả hoạt động..."></textarea>
+      </div>
+      <div class="geo-picker-box">
+        <div class="geo-info">
+          <div class="form-group flex-1"><label>Vĩ độ</label><input type="text" id="loc-lat" readonly required></div>
+          <div class="form-group flex-1"><label>Kinh độ</label><input type="text" id="loc-lng" readonly required></div>
+        </div>
+        <div class="geo-buttons">
+          <button type="button" onclick="enableMapPinningMode()" class="btn-geo map-pick"><span class="material-icons">pin_drop</span> Chọn trên bản đồ</button>
+          <button type="button" onclick="getCurrentGPS()" class="btn-geo gps-pick"><span class="material-icons">my_location</span> Lấy GPS</button>
+        </div>
+      </div>
+      <div id="duplicate-warning" class="warning-box" style="display: none;"></div>
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Hủy</button>
+        <button type="submit" class="btn-primary">Lưu điểm</button>
+      </div>
+    </form>
+  </div>
+</div>

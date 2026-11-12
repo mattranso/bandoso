@@ -1,0 +1,269 @@
+<style>
+  :root { 
+    --primary-color: #da251c; 
+    --secondary-color: #ffcc00; 
+    --dark-color: #1a1a1a; 
+    --light-bg: #f8f9fa; 
+    --border-color: #e0e0e0; 
+    --sidebar-width: 320px; 
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  body, html { width: 100%; height: 100%; overflow: hidden; background: var(--light-bg); }
+  
+  /* Màn hình đăng nhập nền đỏ đều khối, không bị sọc */
+  .auth-wrapper { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    height: 100vh; 
+    background: #b31412; /* Nền đỏ đồng nhất nguyên khối */
+  }
+  .login-card { background: #ffffff; padding: 35px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); width: 100%; max-width: 420px; text-align: center; }
+  .login-header h2 { color: var(--primary-color); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .login-header p { color: #666; font-size: 12px; margin-bottom: 20px; }
+  
+  .form-group { margin-bottom: 14px; text-align: left; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 5px; }
+  .input-with-icon { position: relative; display: flex; align-items: center; }
+  .input-with-icon .material-icons { position: absolute; left: 12px; color: #777; font-size: 18px; }
+  .input-with-icon input { width: 100%; padding: 10px 10px 10px 38px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; outline: none; }
+  
+  .btn-primary { width: 100%; background: var(--primary-color); color: #fff; border: none; padding: 11px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn-guest { width: 100%; background: #37474f; color: #fff; border: none; padding: 11px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .error-msg { background: #ffebee; color: #c62828; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px; text-align: center; }
+  .auth-switch { margin-top: 15px; font-size: 12px; color: #666; }
+  .auth-switch a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+
+  /* Main Workspace Layout */
+  .main-wrapper { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
+  
+  /* Thanh tiêu đề trang trọng: Nền đỏ, chữ trắng và vàng kim */
+  .app-header { 
+    height: 60px; 
+    min-height: 60px; 
+    background: #da251c; 
+    border-bottom: 3px solid #ffcc00; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 0 20px; 
+    z-index: 100; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-left h1 { font-size: 14px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; }
+  .header-left p { font-size: 10px; color: #ffcc00; font-weight: 700; text-transform: uppercase; }
+  
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .welcome-text { font-size: 12px; font-weight: 600; color: #ffffff; }
+  
+  .btn-action { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-action.primary { background: #ffcc00; color: #b31412; font-weight: 700; }
+  .btn-action.logout { background: rgba(255,255,255,0.2); color: #ffffff; }
+  
+  .workspace { display: flex; flex: 1; width: 100%; height: calc(100vh - 60px); position: relative; overflow: hidden; }
+  .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: #ffffff; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 14px; gap: 12px; overflow-y: auto; height: 100%; }
+  .search-box { position: relative; display: flex; align-items: center; }
+  .search-box .material-icons { position: absolute; left: 10px; color: #777; font-size: 18px; }
+  .search-box input { width: 100%; padding: 9px 9px 9px 34px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; outline: none; }
+  
+  .filter-section h3 { font-size: 11px; font-weight: 700; color: #444; margin-bottom: 6px; text-transform: uppercase; }
+  .filter-group { margin-bottom: 10px; }
+  .filter-group label { display: block; font-size: 11px; font-weight: 600; color: #555; margin-bottom: 3px; }
+  .filter-group select { width: 100%; padding: 7px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; background: #fff; }
+  
+  .stats-panel { margin-top: auto; background: #fffde7; padding: 10px; border-radius: 6px; border: 1px solid #fff59d; }
+  .stat-item { display: flex; align-items: center; gap: 8px; }
+  .stat-item .material-icons { color: #fbc02d; font-size: 24px; }
+  .stat-item strong { font-size: 14px; color: #333; }
+  .stat-item p { font-size: 10px; color: #666; }
+
+  /* Map Container */
+  .map-container { flex: 1; height: 100%; position: relative; }
+  #map { width: 100%; height: 100%; background: #e5e3df; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 15px; }
+  .modal-content { background: #ffffff; width: 100%; max-width: 580px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h2 { font-size: 14px; font-weight: 700; }
+  .btn-close { background: none; border: none; cursor: pointer; color: #777; }
+  #loc-form { padding: 18px; }
+  .form-row { display: flex; gap: 10px; }
+  .flex-1 { flex: 1; }
+  .flex-2 { flex: 2; }
+  #loc-form input, #loc-form select, #loc-form textarea { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; outline: none; }
+  .geo-picker-box { background: #f1f8e9; border: 1px solid #c5e1a5; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+  .geo-info { display: flex; gap: 8px; margin-bottom: 6px; }
+  .geo-buttons { display: flex; gap: 8px; }
+  .btn-geo { flex: 1; padding: 7px; border-radius: 6px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; color: white; }
+  .map-pick { background: #33691e; }
+  .gps-pick { background: #1b5e20; }
+  .modal-footer { padding-top: 10px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+</style>
+<style>
+  :root { 
+    --primary-color: #da251c; 
+    --secondary-color: #ffcc00; 
+    --dark-color: #1a1a1a; 
+    --light-bg: #f8f9fa; 
+    --border-color: #e0e0e0; 
+    --sidebar-width: 320px; 
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  body, html { width: 100%; height: 100%; overflow: hidden; background: var(--light-bg); }
+  
+  .auth-wrapper { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    height: 100vh; 
+    background: #b31412; 
+  }
+  .login-card { background: #ffffff; padding: 35px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); width: 100%; max-width: 420px; text-align: center; }
+  .login-header h2 { color: var(--primary-color); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .login-header p { color: #666; font-size: 12px; margin-bottom: 20px; }
+  
+  .form-group { margin-bottom: 14px; text-align: left; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 5px; }
+  .input-with-icon { position: relative; display: flex; align-items: center; }
+  .input-with-icon .material-icons { position: absolute; left: 12px; color: #777; font-size: 18px; }
+  .input-with-icon input { width: 100%; padding: 10px 10px 10px 38px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; outline: none; }
+  
+  .btn-primary { width: 100%; background: var(--primary-color); color: #fff; border: none; padding: 11px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn-guest { width: 100%; background: #37474f; color: #fff; border: none; padding: 11px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .error-msg { background: #ffebee; color: #c62828; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px; text-align: center; }
+  .auth-switch { margin-top: 15px; font-size: 12px; color: #666; }
+  .auth-switch a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+
+  /* Main Workspace Layout */
+  .main-wrapper { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
+  
+  .app-header { 
+    height: 60px; 
+    min-height: 60px; 
+    background: #da251c; 
+    border-bottom: 3px solid #ffcc00; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 0 20px; 
+    z-index: 100; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  
+  /* Cố định khung chứa và kích thước logo chuẩn tuyệt đối trên header */
+  .header-left img.app-logo { 
+    height: 42px; 
+    width: 42px; 
+    object-fit: contain; 
+    background: #ffffff; 
+    border-radius: 50%; 
+    padding: 2px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .header-left h1 { font-size: 14px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; }
+  .header-left p { font-size: 10px; color: #ffcc00; font-weight: 700; text-transform: uppercase; }
+  
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .welcome-text { font-size: 12px; font-weight: 600; color: #ffffff; }
+  
+  .btn-action { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-action.primary { background: #ffcc00; color: #b31412; font-weight: 700; }
+  .btn-action.logout { background: rgba(255,255,255,0.2); color: #ffffff; }
+  
+  .workspace { display: flex; flex: 1; width: 100%; height: calc(100vh - 60px); position: relative; overflow: hidden; }
+  .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: #ffffff; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 14px; gap: 12px; overflow-y: auto; height: 100%; }
+  .search-box { position: relative; display: flex; align-items: center; }
+  .search-box .material-icons { position: absolute; left: 10px; color: #777; font-size: 18px; }
+  .search-box input { width: 100%; padding: 9px 9px 9px 34px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; outline: none; }
+  
+  .filter-section h3 { font-size: 11px; font-weight: 700; color: #444; margin-bottom: 6px; text-transform: uppercase; }
+  .filter-group { margin-bottom: 10px; }
+  .filter-group label { display: block; font-size: 11px; font-weight: 600; color: #555; margin-bottom: 3px; }
+  .filter-group select { width: 100%; padding: 7px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; background: #fff; }
+  
+  .stats-panel { margin-top: auto; background: #fffde7; padding: 10px; border-radius: 6px; border: 1px solid #fff59d; }
+  .stat-item { display: flex; align-items: center; gap: 8px; }
+  .stat-item .material-icons { color: #fbc02d; font-size: 24px; }
+  .stat-item strong { font-size: 14px; color: #333; }
+  .stat-item p { font-size: 10px; color: #666; }
+
+  /* Map Container */
+  .map-container { flex: 1; height: 100%; position: relative; }
+  #map { width: 100%; height: 100%; background: #e5e3df; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 15px; }
+  .modal-content { background: #ffffff; width: 100%; max-width: 580px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h2 { font-size: 14px; font-weight: 700; }
+  .btn-close { background: none; border: none; cursor: pointer; color: #777; }
+  #loc-form { padding: 18px; }
+  .form-row { display: flex; gap: 10px; }
+  .flex-1 { flex: 1; }
+  .flex-2 { flex: 2; }
+  #loc-form input, #loc-form select, #loc-form textarea { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; outline: none; }
+  .geo-picker-box { background: #f1f8e9; border: 1px solid #c5e1a5; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+  .geo-info { display: flex; gap: 8px; margin-bottom: 6px; }
+  .geo-buttons { display: flex; gap: 8px; }
+  .btn-geo { flex: 1; padding: 7px; border-radius: 6px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; color: white; }
+  .map-pick { background: #33691e; }
+  .gps-pick { background: #1b5e20; }
+  .modal-footer { padding-top: 10px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  /* ========================================== */
+  /* CSS CHO GIAO DIỆN DI ĐỘNG (RESPONSIVE)     */
+  /* ========================================== */
+  @media screen and (max-width: 768px) {
+    /* Chuyển bố cục thành chiều dọc: Bản đồ ở trên, bộ lọc ở dưới */
+    .workspace {
+      flex-direction: column !important;
+      overflow-y: auto !important;
+    }
+
+    /* Bản đồ chiếm không gian ở nửa trên màn hình */
+    .map-container {
+      height: 55vh !important;
+      min-height: 400px;
+      flex: none !important;
+    }
+
+    /* Sidebar (Bộ lọc) trải rộng 100% bên dưới bản đồ */
+    .sidebar {
+      width: 100% !important;
+      min-width: 100% !important;
+      height: auto !important;
+      border-right: none !important;
+      border-top: 2px solid var(--border-color);
+    }
+
+    /* Header: Thu gọn lề, chỉnh nhỏ chữ */
+    .app-header {
+      padding: 0 10px !important;
+    }
+    
+    .header-left h1 {
+      font-size: 11px !important;
+      white-space: normal;
+      line-height: 1.2;
+    }
+
+    /* Ẩn dòng chữ phụ "BẢN ĐỒ SỐ MẶT TRẬN – CỘNG ĐỒNG" và chữ "Xin chào..." để đỡ rối */
+    .header-left p, .welcome-text {
+      display: none !important; 
+    }
+
+    /* Quan Trọng: Các nút trên header chỉ hiện Icon, ẩn phần chữ đi */
+    .header-right .btn-action span:not(.material-icons) {
+      display: none !important;
+    }
+
+    .header-right .btn-action {
+      padding: 8px !important;
+    }
+  }
+</style>

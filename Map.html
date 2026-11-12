@@ -1,0 +1,552 @@
+<div class="app-layout" style="display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden;">
+  <!-- Header Navbar -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Bi%E1%BB%83u_tr%C6%B0ng_M%E1%BA%B7t_tr%E1%BA%ADn_T%E1%BB%95_qu%E1%BB%91c_Vi%E1%BB%87t_Nam.svg" alt="Logo MTTQ Việt Nam" class="app-logo" style="width: 42px; height: 42px; object-fit: contain; background: #ffffff; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      <div>
+        <h1>ỦY BAN MTTQ VIỆT NAM TP ĐỒNG NAI</h1>
+        <p>BẢN ĐỒ SỐ MẶT TRẬN – CỘNG ĐỒNG</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span id="user-welcome" class="welcome-text">Xin chào...</span>
+      
+      <button id="admin-unit-btn" onclick="openManageUnitModal()" class="btn-action" style="display:none; background:#00796b; color:white;">
+        <span class="material-icons">location_city</span>
+        <span>QUẢN LÝ ĐƠN VỊ</span>
+      </button>
+
+      <button id="admin-cat-btn" onclick="openManageCatModal()" class="btn-action" style="display:none; background:#8e24aa; color:white;">
+        <span class="material-icons">category</span>
+        <span>QUẢN LÝ DANH MỤC</span>
+      </button>
+
+      <button id="admin-loc-btn" onclick="openManageLocModal()" class="btn-action" style="display:none; background:#4CAF50; color:white;">
+        <span class="material-icons">edit_location_alt</span>
+        <span>QUẢN LÝ ĐỊA ĐIỂM</span>
+      </button>
+
+      <button id="admin-manage-btn" onclick="openManageUsersModal()" class="btn-action" style="display:none; background:#1976d2; color:white;">
+        <span class="material-icons">manage_accounts</span>
+        <span>QUẢN LÝ TÀI KHOẢN</span>
+      </button>
+
+      <button id="admin-approve-btn" onclick="openApprovalModal()" class="btn-action" style="display:none; background:#ffcc00; color:#b31412; font-weight:700;">
+        <span class="material-icons">how_to_reg</span>
+        <span>DUYỆT TÀI KHOẢN</span>
+      </button>
+
+      <button id="pass-btn" onclick="openChangePasswordModal()" class="btn-action" style="background:rgba(255,255,255,0.2); color:#ffffff;">
+        <span class="material-icons">vpn_key</span>
+        <span>ĐỔI MẬT KHẨU</span>
+      </button>
+
+      <button id="add-loc-btn" onclick="openAddLocationModal()" class="btn-action primary">
+        <span class="material-icons">add_location</span>
+        <span>GHIM ĐIỂM MỚI</span>
+      </button>
+      
+      <button onclick="handleLogout()" class="btn-action logout">
+        <span class="material-icons">logout</span>
+        <span>ĐĂNG XUẤT</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="workspace" style="display: flex; flex: 1; width: 100%; height: calc(100vh - 60px); position: relative; overflow: hidden;">
+    <!-- Sidebar Controls -->
+    <aside class="sidebar" style="display: flex; flex-direction: column;">
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" id="search-input" placeholder="Tìm kiếm tên điểm, địa chỉ..." oninput="filterLocations()">
+      </div>
+
+      <div class="filter-section">
+        <h3>Bộ lọc dữ liệu</h3>
+        <div class="filter-group">
+          <label>Nhóm dữ liệu</label>
+          <select id="filter-group-select" onchange="updateSubCategories()">
+            <option value="">-- Tất cả nhóm dữ liệu --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Loại điểm</label>
+          <select id="filter-type-select">
+            <option value="">-- Tất cả loại điểm --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Xã / Phường (95 đơn vị)</label>
+          <select id="filter-ward-select">
+            <option value="">-- Tất cả xã/phường --</option>
+          </select>
+        </div>
+        <div class="filter-group" style="margin-top: 10px;">
+          <button onclick="filterLocations()" class="btn-primary" style="width: 100%; padding: 8px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <span class="material-icons" style="font-size: 16px;">filter_alt</span> 
+            <span>LỌC DỮ LIỆU</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="filter-section" style="margin-top: 10px; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 10px; border-radius: 6px;">
+        <h3 style="margin-bottom: 8px; font-size: 12px; color: #da251c; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+          TÙY CHỌN HIỂN THỊ
+        </h3>
+        <div style="font-size: 13px; display: flex; flex-direction: column; gap: 6px; color: #444;">
+          <label style="cursor:pointer;"><input type="checkbox" id="chk-loai" checked onchange="refreshPopupDisplay()"> Loại điểm</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chk-diachi" checked onchange="refreshPopupDisplay()"> Địa chỉ</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chk-mota" onchange="refreshPopupDisplay()"> Mô tả chi tiết</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chk-toado" onchange="refreshPopupDisplay()"> Tọa độ GPS</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="chk-trangthai" checked onchange="refreshPopupDisplay()"> Trạng thái duyệt</label>
+        </div>
+      </div>
+
+      <div class="stats-panel" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="stat-item">
+          <span class="material-icons">place</span>
+          <div>
+            <strong id="total-count">0</strong>
+            <p>Tổng số điểm hiển thị</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="search-results-wrapper" style="display: flex; flex-direction: column; flex: 1; min-height: 150px; overflow: hidden; margin-bottom: 10px;">
+        <h3 style="font-size: 12px; color: #da251c; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 8px;">DANH SÁCH ĐỊA ĐIỂM</h3>
+        <div id="search-results-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+          <div style="font-size: 12px; color: #777; text-align: center; padding: 15px; font-style: italic;">Nhấp "Lọc dữ liệu" để xem danh sách...</div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; font-size: 11px; color: #666; border-top: 1px solid #eee; padding-top: 10px; line-height: 1.5; flex-shrink: 0;">
+        © Bản quyền thuộc <b style="color: darkred;">Lê Văn Nguyên</b> - Ủy ban MTTQ Việt Nam TP Đồng Nai.
+      </div>
+    </aside>
+
+    <main class="map-container" style="flex: 1; height: 100%; position: relative;">
+      <div id="map" style="width: 100%; height: 100%; background: #e5e3df;"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal Ghim Điểm Mới (Tọa độ Readonly) -->
+<div id="location-modal" class="modal-overlay" style="display: none; z-index: 3100;">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h2>Ghim Điểm Dữ Liệu Mới</h2>
+      <button type="button" onclick="closeModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="loc-form" onsubmit="saveLocation(event)" style="padding: 20px; text-align: left;">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Tên điểm *</label>
+        <input type="text" id="loc-name" required placeholder="Nhập tên điểm..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+        <div style="flex: 1;">
+          <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Nhóm dữ liệu *</label>
+          <select id="loc-group" onchange="populateFormTypes()" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:13px;">
+            <option value="">-- Chọn nhóm --</option>
+          </select>
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Loại điểm *</label>
+          <select id="loc-type" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:13px;">
+            <option value="">-- Chọn loại điểm --</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Xã / Phường (95 đơn vị) *</label>
+        <select id="loc-ward" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:13px;">
+          <option value="">-- Chọn xã/phường --</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Địa chỉ chi tiết</label>
+        <input type="text" id="loc-address" placeholder="Số nhà, tên đường..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Mô tả chi tiết</label>
+        <textarea id="loc-desc" rows="2" placeholder="Nhập mô tả hoạt động..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;"></textarea>
+      </div>
+      <div style="display: flex; gap: 10px; margin-bottom: 12px; background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #e0e0e0;">
+        <div style="flex: 1;">
+          <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #2e7d32;">Vĩ độ</label>
+          <input type="text" id="loc-lat" readonly style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; background-color:#e9ecef; color:#495057; font-weight:bold; cursor:not-allowed; box-sizing: border-box;">
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #2e7d32;">Kinh độ</label>
+          <input type="text" id="loc-lng" readonly style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; background-color:#e9ecef; color:#495057; font-weight:bold; cursor:not-allowed; box-sizing: border-box;">
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button type="button" onclick="enableMapPinningMode()" style="flex: 1; padding: 10px; border-radius: 6px; background: #2e7d32; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;"><span class="material-icons" style="font-size: 18px;">place</span> Chọn trên bản đồ</button>
+        <button type="button" onclick="getCurrentGPS()" style="flex: 1; padding: 10px; border-radius: 6px; background: #1565c0; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;"><span class="material-icons" style="font-size: 18px;">my_location</span> Lấy GPS</button>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; gap:10px;">
+        <button type="button" onclick="closeModal()" class="btn-secondary" style="padding: 10px 20px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="flex: 1; padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Lưu điểm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Quản lý Đơn vị Xã/Phường -->
+<div id="manage-unit-modal" class="modal-overlay" style="display: none; z-index: 3500;">
+  <div class="modal-content" style="max-width: 600px; width: 95%;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">Quản lý Đơn vị (Xã/Phường)</h2>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="openEditUnitModal()" style="background: #da251c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+          <span class="material-icons" style="font-size: 16px;">add</span> Thêm mới
+        </button>
+        <button type="button" onclick="closeManageUnitModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+      </div>
+    </div>
+    <div style="padding: 15px; max-height: 400px; overflow-y: auto;">
+      <table style="width:100%; border-collapse: collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f1f1f1; text-align:left;">
+            <th style="padding:10px; border:1px solid #ddd; width: 25%;">Mã Đơn vị</th>
+            <th style="padding:10px; border:1px solid #ddd;">Tên Xã / Phường</th>
+            <th style="padding:10px; border:1px solid #ddd; text-align:center; width: 100px;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="all-unit-list">
+          <tr><td colspan="3" style="text-align:center; padding:15px; color:#777;">Đang tải dữ liệu...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thêm/Sửa Đơn vị -->
+<div id="edit-unit-modal" class="modal-overlay" style="display: none; z-index: 3600;">
+  <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-header">
+      <h2 id="unit-modal-title">Thêm Đơn vị mới</h2>
+      <button type="button" onclick="closeEditUnitModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="edit-unit-form" onsubmit="event.preventDefault(); submitUnit(); return false;" style="padding: 20px; text-align: left;">
+      <input type="hidden" id="edit-unit-id">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Tên Xã / Phường <span style="color:red;">*</span></label>
+        <input type="text" id="edit-unit-name" required placeholder="VD: Phường Trảng Dài" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" onclick="closeEditUnitModal()" class="btn-secondary" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Lưu thông tin</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Quản lý Danh mục & Kho Icon -->
+<div id="manage-cat-modal" class="modal-overlay" style="display: none; z-index: 3300;">
+  <div class="modal-content" style="max-width: 800px; width: 95%;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">Quản lý Nhóm dữ liệu & Loại điểm</h2>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="openEditCatModal()" style="background: #da251c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+          <span class="material-icons" style="font-size: 16px;">add</span> Thêm mới
+        </button>
+        <button type="button" onclick="closeManageCatModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+      </div>
+    </div>
+    <div style="padding: 15px; max-height: 400px; overflow-y: auto;">
+      <table style="width:100%; border-collapse: collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f1f1f1; text-align:left;">
+            <th style="padding:10px; border:1px solid #ddd; width: 60px; text-align:center;">Icon</th>
+            <th style="padding:10px; border:1px solid #ddd;">Nhóm dữ liệu</th>
+            <th style="padding:10px; border:1px solid #ddd;">Loại điểm</th>
+            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="all-cat-list">
+          <tr><td colspan="4" style="text-align:center; padding:15px; color:#777;">Đang tải danh mục...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thêm/Sửa Danh mục -->
+<div id="edit-cat-modal" class="modal-overlay" style="display: none; z-index: 3400;">
+  <div class="modal-content" style="max-width: 450px;">
+    <div class="modal-header">
+      <h2 id="cat-modal-title">Thêm Danh mục mới</h2>
+      <button type="button" onclick="closeEditCatModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="edit-cat-form" onsubmit="event.preventDefault(); submitCategory(); return false;" style="padding: 20px; text-align: left;">
+      <input type="hidden" id="edit-cat-id">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Nhóm dữ liệu <span style="color:red;">*</span></label>
+        <input type="text" id="edit-cat-group" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px; text-transform: uppercase;">
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Loại điểm <span style="color:red;">*</span></label>
+        <input type="text" id="edit-cat-type" required oninput="updatePreviewColor()" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Ghi chú / Mô tả</label>
+        <input type="text" id="edit-cat-desc" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Kho Icon <span style="color:red;">*</span></label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div id="icon-preview-circle" style="background-color: #da251c; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <span id="icon-preview" class="material-icons" style="color: white; font-size: 20px;">place</span>
+          </div>
+          <select id="edit-cat-icon" required onchange="document.getElementById('icon-preview').innerText = this.value;" style="flex: 1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:13px; font-family: Arial, sans-serif; background: #fff;">
+            <option value="place">Điểm cơ bản (Place)</option>
+            <option value="home">Ngôi nhà (Home)</option>
+            <option value="favorite">Trái tim (Favorite)</option>
+            <option value="apartment">Tòa nhà (Apartment)</option>
+            <option value="bridge">Cây cầu (Bridge)</option>
+            <option value="location_city">Khu phố (City)</option>
+            <option value="route">Tuyến đường (Route)</option>
+            <option value="celebration">Chào mừng (Celebration)</option>
+            <option value="groups">Đoàn thể (Groups)</option>
+            <option value="female">Phụ nữ (Female)</option>
+            <option value="agriculture">Nông nghiệp (Agriculture)</option>
+            <option value="military_tech">Huy chương (Military)</option>
+            <option value="badge">Thẻ cán bộ (Badge)</option>
+            <option value="security">An ninh (Security)</option>
+            <option value="thumb_up">Biểu dương (Thumb up)</option>
+            <option value="eco">Môi trường (Eco)</option>
+            <option value="devices">Thiết bị số (Devices)</option>
+            <option value="hub">Trạm kết nối (Hub)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" onclick="closeEditCatModal()" class="btn-secondary" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Lưu danh mục</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Quản lý Địa điểm -->
+<div id="manage-loc-modal" class="modal-overlay" style="display: none; z-index: 3000;">
+  <div class="modal-content" style="max-width: 900px; width: 95%;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">Quản lý Dữ liệu Địa điểm</h2>
+      <button type="button" onclick="closeManageLocModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <div style="padding: 15px; max-height: 500px; overflow-y: auto;">
+      <table style="width:100%; border-collapse: collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f1f1f1; text-align:left;">
+            <th style="padding:10px; border:1px solid #ddd;">Tên điểm</th>
+            <th style="padding:10px; border:1px solid #ddd;">Loại điểm</th>
+            <th style="padding:10px; border:1px solid #ddd;">Xã / Phường</th>
+            <th style="padding:10px; border:1px solid #ddd;">Trạng thái</th>
+            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="all-loc-list">
+          <tr><td colspan="5" style="text-align:center; padding:15px; color:#777;">Đang tải danh sách địa điểm...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Sửa Thông tin Địa điểm -->
+<div id="edit-loc-modal" class="modal-overlay" style="display: none; z-index: 3100;">
+  <div class="modal-content" style="max-width: 450px;">
+    <div class="modal-header">
+      <h2>Sửa thông tin địa điểm</h2>
+      <button type="button" onclick="closeEditLocModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="edit-loc-form" onsubmit="event.preventDefault(); submitEditLocation(); return false;" style="padding: 20px; text-align: left;">
+      <input type="hidden" id="edit-loc-id">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Tên điểm <span style="color:red;">*</span></label>
+        <input type="text" id="edit-loc-name" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Nhóm dữ liệu <span style="color:red;">*</span></label>
+        <select id="edit-loc-group" onchange="populateEditFormTypes()" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px; background:#fff;">
+          <option value="">-- Chọn nhóm dữ liệu --</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Loại điểm <span style="color:red;">*</span></label>
+        <select id="edit-loc-type" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px; background:#fff;">
+          <option value="">-- Chọn loại điểm --</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Địa chỉ chi tiết</label>
+        <input type="text" id="edit-loc-address" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Mô tả chi tiết</label>
+        <textarea id="edit-loc-desc" rows="3" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;"></textarea>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" onclick="closeEditLocModal()" class="btn-secondary" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Đổi Mật Khẩu Cá Nhân -->
+<div id="password-modal" class="modal-overlay" style="display: none; z-index: 3000;">
+  <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-header">
+      <h2>Thay đổi mật khẩu tài khoản</h2>
+      <button type="button" onclick="closePasswordModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="pass-form" onsubmit="event.preventDefault(); submitPass(); return false;" style="padding: 20px; text-align: left;">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Mật khẩu cũ</label>
+        <input type="password" id="old-pass" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Mật khẩu mới</label>
+        <input type="password" id="new-pass" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" onclick="closePasswordModal()" class="btn-secondary" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Cập nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Duyệt Tài Khoản Chờ -->
+<div id="approval-modal" class="modal-overlay" style="display: none; z-index: 3000;">
+  <div class="modal-content" style="max-width: 650px;">
+    <div class="modal-header">
+      <h2>Phê duyệt tài khoản đăng ký mới</h2>
+      <button type="button" onclick="closeApprovalModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <div style="padding: 15px; max-height: 400px; overflow-y: auto;">
+      <table id="pending-users-table" style="width:100%; border-collapse: collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f1f1f1; text-align:left;">
+            <th style="padding:10px; border:1px solid #ddd;">Họ tên</th>
+            <th style="padding:10px; border:1px solid #ddd;">Tài khoản</th>
+            <th style="padding:10px; border:1px solid #ddd;">Đơn vị</th>
+            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="pending-users-list">
+          <tr><td colspan="4" style="text-align:center; padding:15px; color:#777;">Đang tải danh sách...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Quản lý Toàn bộ Tài khoản -->
+<div id="manage-users-modal" class="modal-overlay" style="display: none; z-index: 3000;">
+  <div class="modal-content" style="max-width: 900px; width: 95%;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">Quản lý Tài khoản Cấp dưới</h2>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="openImportModal()" style="background: #4CAF50; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+          <span class="material-icons" style="font-size: 16px;">post_add</span> Import từ Excel
+        </button>
+        <button type="button" onclick="closeManageUsersModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+      </div>
+    </div>
+    <div style="padding: 15px; max-height: 500px; overflow-y: auto;">
+      <table style="width:100%; border-collapse: collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f1f1f1; text-align:left;">
+            <th style="padding:10px; border:1px solid #ddd;">Họ tên</th>
+            <th style="padding:10px; border:1px solid #ddd;">Tài khoản</th>
+            <th style="padding:10px; border:1px solid #ddd;">Phân quyền</th>
+            <th style="padding:10px; border:1px solid #ddd;">Trạng thái</th>
+            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="all-users-list">
+          <tr><td colspan="5" style="text-align:center; padding:15px; color:#777;">Đang tải danh sách...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Sửa Thông tin Tài khoản -->
+<div id="edit-user-modal" class="modal-overlay" style="display: none; z-index: 3100;">
+  <div class="modal-content" style="max-width: 450px;">
+    <div class="modal-header">
+      <h2>Sửa thông tin tài khoản</h2>
+      <button type="button" onclick="closeEditUserModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="edit-user-form" onsubmit="event.preventDefault(); submitEdit(); return false;" style="padding: 20px; text-align: left;">
+      <input type="hidden" id="edit-userid">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Họ và tên</label>
+        <input type="text" id="edit-hoten" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Đơn vị (Xã/Phường)</label>
+        <input type="text" id="edit-xaphuong" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Phân quyền</label>
+        <select id="edit-vaitro" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;">
+          <option value="CAN_BO_THON">Cán bộ Thôn/Ấp/Khu phố</option>
+          <option value="CAN_BO_XA">Cán bộ Xã/Phường</option>
+          <option value="ADMIN">Quản trị viên Thành phố</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Trạng thái</label>
+        <select id="edit-trangthai" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;">
+          <option value="HOAT_DONG">Hoạt động</option>
+          <option value="CHO_DUYET">Chờ duyệt</option>
+          <option value="TU_CHOI">Khóa / Từ chối</option>
+        </select>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" onclick="closeEditUserModal()" class="btn-secondary" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Lưu cập nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Import Tài Khoản từ Excel -->
+<div id="import-modal" class="modal-overlay" style="display: none; z-index: 3200;">
+  <div class="modal-content" style="max-width: 550px;">
+    <div class="modal-header">
+      <h2>Nhập danh sách từ Excel</h2>
+      <button type="button" onclick="closeImportModal()" class="btn-close" style="background:none; border:none; cursor:pointer;"><span class="material-icons">close</span></button>
+    </div>
+    <form id="import-form" onsubmit="event.preventDefault(); submitImport(); return false;" style="padding: 20px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px dashed #ccc;">
+        <p style="font-size: 13px; color: #333; margin: 0;">Copy dữ liệu từ Excel và dán (Paste) vào ô bên dưới.<br>Thứ tự 4 cột: <b>Họ Tên | Tài Khoản | Số Điện Thoại | Tên Thôn/Ấp</b>.</p>
+        <button type="button" onclick="downloadSampleFile()" style="background: #e0e0e0; color: #333; border: 1px solid #bbb; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+          <span class="material-icons" style="font-size: 16px; color: #1976d2;">download</span> File mẫu
+        </button>
+      </div>
+      <textarea id="import-data" rows="8" placeholder="Nguyễn Văn A    tendangnhap1    090123456    Khu phố 1&#10;Trần Thị B      tendangnhap2    091122233    Khu phố 2" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 13px; white-space: pre; overflow-wrap: normal; overflow-x: auto; font-family: monospace;"></textarea>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px; margin-top: 15px;">
+        <button type="button" onclick="closeImportModal()" class="btn-secondary" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white;">Hủy</button>
+        <button type="submit" class="btn-primary" style="padding: 10px 15px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">Tiến hành Import</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Cửa sổ popup thông báo Alert tùy chỉnh -->
+<div id="alert-modal" class="modal-overlay" style="display: none; z-index: 4000;">
+  <div class="modal-content" style="max-width: 380px; text-align: center; padding: 20px;">
+    <div id="alert-icon" style="font-size: 40px; margin-bottom: 10px;">✅</div>
+    <h3 id="alert-title" style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #1a1a1a;">Thông báo</h3>
+    <p id="alert-message" style="font-size: 13px; color: #555; margin-bottom: 20px;">Nội dung thông báo...</p>
+    <button type="button" onclick="closeAlertModal()" class="btn-primary" style="width: 100%; padding: 10px; border-radius: 6px; border: none; background: #da251c; color: white; font-weight: 600; cursor: pointer;">ĐỒNG Ý</button>
+  </div>
+</div>

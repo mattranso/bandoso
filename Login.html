@@ -1,0 +1,100 @@
+<!-- Khu vực Form Đăng Nhập -->
+<div class="login-card">
+  <div class="login-header" style="text-align: center;">
+    <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Bi%E1%BB%83u_tr%C6%B0ng_M%E1%BA%B7t_tr%E1%BA%ADn_T%E1%BB%95_qu%E1%BB%91c_Vi%E1%BB%87t_Nam.svg" alt="Logo MTTQ Việt Nam" style="width: 75px; height: 75px; object-fit: contain;">
+    </div>
+    <h2 style="color: #da251c; margin-bottom: 5px;">BẢN ĐỒ SỐ MẶT TRẬN</h2>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Ủy ban MTTQ Việt Nam thành phố Đồng Nai</p>
+  </div>
+  
+  <form id="login-form" onsubmit="event.preventDefault(); submitLogin();" style="text-align: left;">
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #333;">Tên đăng nhập</label>
+      <div style="position: relative;">
+        <span class="material-icons" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #777; font-size: 20px;">person</span>
+        <input type="text" id="username" required placeholder="Nhập tên đăng nhập..." style="width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px;">
+      </div>
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #333;">Mật khẩu</label>
+      <div style="position: relative;">
+        <span class="material-icons" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #777; font-size: 20px;">lock</span>
+        <input type="password" id="password" required placeholder="Mật khẩu..." style="width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px;">
+      </div>
+    </div>
+    
+    <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; background: #da251c; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+      <span>ĐĂNG NHẬP HỆ THỐNG</span>
+      <span class="material-icons" style="font-size: 18px;">login</span>
+    </button>
+  </form>
+
+  <button type="button" onclick="loginAsGuest()" class="btn-guest" style="width: 100%; padding: 12px; background: #37474f; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;">
+    <span>XEM BẢN ĐỒ (CHẾ ĐỘ KHÁCH)</span>
+    <span class="material-icons" style="font-size: 18px;">public</span>
+  </button>
+
+  <div class="auth-switch" style="margin-top: 20px; font-size: 13px; text-align: center;">
+    <p>Cán bộ cơ sở chưa có tài khoản? <a href="javascript:void(0)" onclick="showRegisterForm(event)" style="color: #da251c; font-weight: 600; text-decoration: none;">Đăng ký ngay</a></p>
+  </div>
+  
+  <div style="margin-top: 20px; text-align: center; font-size: 11px; color: #666; border-top: 1px solid #eee; padding-top: 12px; line-height: 1.5;">
+    © Bản quyền thuộc <b style="color: darkred;">Lê Văn Nguyên</b> - Ủy ban Mặt trận Tổ quốc Việt Nam thành phố Đồng Nai.
+  </div>
+</div>
+
+<!-- Khu vực Form Đăng Ký Tài Khoản -->
+<div id="register-card" class="login-card" style="display: none;">
+  <div class="login-header" style="text-align: center;">
+    <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Bi%E1%BB%83u_tr%C6%B0ng_M%E1%BA%B7t_tr%E1%BA%ADn_T%E1%BB%95_qu%E1%BB%91c_Vi%E1%BB%87t_Nam.svg" alt="Logo MTTQ Việt Nam" style="width: 75px; height: 75px; object-fit: contain;">
+    </div>
+    <h2 style="color: #da251c; margin-bottom: 5px;">ĐĂNG KÝ TÀI KHOẢN</h2>
+    <p style="color: #666; font-size: 13px; margin-bottom: 20px;">Cán bộ cơ sở / Xã phường</p>
+  </div>
+  
+  <form id="reg-form" onsubmit="event.preventDefault(); submitRegister();" style="text-align: left;">
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Họ và tên <span style="color:red;">*</span></label>
+      <input type="text" id="reg-fullname" required placeholder="Nguyễn Văn A" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Tên đăng nhập <span style="color:red;">*</span></label>
+      <input type="text" id="reg-username" required placeholder="tendangnhap" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Mật khẩu <span style="color:red;">*</span></label>
+      <input type="password" id="reg-password" required placeholder="Mật khẩu" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Đơn vị Xã / Phường <span style="color:red;">*</span></label>
+      <select id="reg-ward" required style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; font-size:13px; background:#fff; box-sizing: border-box;">
+      </select>
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Tên Thôn / Ấp / Khu phố (Nếu có)</label>
+      <input type="text" id="reg-thonap" placeholder="VD: Khu phố 1" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px;">Số điện thoại</label>
+      <input type="text" id="reg-phone" placeholder="0901234567" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box; font-size:13px;">
+    </div>
+    
+    <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; background: #da251c; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer;">GỬI YÊU CẦU ĐĂNG KÝ</button>
+  </form>
+  
+  <div class="auth-switch" style="margin-top: 20px; font-size: 13px; text-align: center;">
+    <p>Đã có tài khoản? <a href="javascript:void(0)" onclick="showLoginForm(event)" style="color: #da251c; font-weight: 600; text-decoration: none;">Đăng nhập ngay</a></p>
+  </div>
+  
+  <div style="margin-top: 20px; text-align: center; font-size: 11px; color: #666; border-top: 1px solid #eee; padding-top: 12px; line-height: 1.5;">
+    © Bản quyền thuộc <b style="color: darkred;">Lê Văn Nguyên</b> - Ủy ban Mặt trận Tổ quốc Việt Nam thành phố Đồng Nai.
+  </div>
+</div>
